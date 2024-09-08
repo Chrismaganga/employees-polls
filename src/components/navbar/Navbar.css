@@ -1,0 +1,72 @@
+/* src/components/Navbar.css */
+.nav {
+  background-color: #333333; /* Dark background color for the navbar */
+  color: #fff; /* White text color */
+  padding: 10px 20px; /* Padding around the navbar */
+  display: flex;
+  justify-content: space-between; /* Spread out content in the navbar */
+  align-items: center; /* Vertically center the items */
+  position: relative;
+}
+
+ul.menu {
+  list-style: none; /* Remove bullet points */
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex: 1; /* Allow the menu to take up remaining space */
+  justify-content: space-around; /* Evenly distribute the links */
+  align-items: center; /* Center align items vertically */
+}
+
+ul.menu li {
+  margin: 0; /* Remove any extra margin around list items */
+}
+
+ul.menu li a {
+  color: #fff; /* White text color */
+  text-decoration: none; /* Remove underline */
+  font-weight: bold; /* Bold text */
+  padding: 10px 20px; /* Padding around each link */
+  transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+ul.menu li a.active {
+  text-decoration: underline; /* Underline active links */
+}
+
+ul.menu li a:hover {
+  background-color: #444; /* Darker background on hover */
+  border-radius: 5px; /* Rounded corners on hover */
+}
+
+.menu-icon {
+  display: none; /* Hidden by default on larger screens */
+  font-size: 24px; /* Larger font size for the menu icon */
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block; /* Show the menu icon on smaller screens */
+  }
+
+  ul.menu {
+    position: absolute; /* Absolute positioning for the dropdown menu */
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #333; /* Same background color as the navbar */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center-align items */
+    display: none; /* Hidden by default */
+  }
+
+  ul.menu.open {
+    display: flex; /* Show the menu when open */
+  }
+
+  ul.menu li {
+    margin: 10px 0; /* Vertical margin for menu items in dropdown */
+  }
+}

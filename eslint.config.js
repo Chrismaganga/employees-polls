@@ -6,6 +6,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
   { ignores: ['dist'] },
+ 
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -22,6 +23,8 @@ export default [
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      'plugin:jest/recommended': 'on',
+    
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -33,6 +36,11 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+    },
+    env: {
+      browser: true,
+      es2024: true,
+      jest: true, // Add this line to enable Jest globals
     },
   },
 ]

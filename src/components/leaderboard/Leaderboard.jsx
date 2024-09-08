@@ -1,5 +1,6 @@
-import './Leaderboard.css';
 
+// export default Leaderboard;
+import './Leaderboard.css';
 import { useSelector } from 'react-redux';
 
 const Leaderboard = () => {
@@ -22,7 +23,12 @@ const Leaderboard = () => {
       <ul>
         {leaderboard.map((user) => (
           <li key={user.id}>
-            <img src={user.avatarURL} alt={`Avatar of ${user.name}`} />
+            {/* Ensure avatarURL is correct or fallback to a default image */}
+            <img
+              src={user.avatarURL || '/images/default-avatar.png'}
+              alt={`Avatar of ${user.name}`}
+              onError={(e) => { e.target.onerror = null; e.target.src = '/images/default-avatar.png'; }} // Fallback in case of error
+            />
             <h4>{user.name}</h4>
             <p>Questions Created: {user.questions}</p>
             <p>Answers: {user.answers}</p>

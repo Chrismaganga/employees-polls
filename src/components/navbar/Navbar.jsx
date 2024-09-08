@@ -1,42 +1,39 @@
-import './Navbar.module.css';
+// src/components/Navbar.jsx
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import styles from './Navbar.module.css';
+import './Navbar.css'; // Ensure you have the correct path to your CSS file
 
 const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
-    <nav className={styles.nav}>
-      <ul className={styles.ul}>
-        <li className={styles.li}>
-          <NavLink
-            to="/"
-            exact
-            className={({ isActive }) => isActive ? styles.active : styles.link}
-          >
+    <nav className="nav">
+      <div className="menu-icon" onClick={toggleMenu}>
+        ☰
+      </div>
+      <ul className={`menu ${menuOpen ? 'open' : ''}`}>
+        <li>
+          <NavLink to="/" exact activeClassName="active">
             Home
           </NavLink>
         </li>
-        <li className={styles.li}>
-          <NavLink
-            to="/add"
-            className={({ isActive }) => isActive ? styles.active : styles.link}
-          >
+        <li>
+          <NavLink to="/add" activeClassName="active">
             New Poll
           </NavLink>
         </li>
-        <li className={styles.li}>
-          <NavLink
-            to="/leaderboard"
-            className={({ isActive }) => isActive ? styles.active : styles.link}
-          >
+        <li>
+          <NavLink to="/leaderboard" activeClassName="active">
             Leaderboard
           </NavLink>
         </li>
-        <li className={styles.li}>
-          <NavLink
-            to="/login"
-            className={({ isActive }) => isActive ? styles.active : styles.link}
-          >
-            Logout
+        <li>
+          <NavLink to="/login" activeClassName="active">
+          
           </NavLink>
         </li>
       </ul>

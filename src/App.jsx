@@ -1,16 +1,17 @@
-// src/components/App.js
-import { useEffect } from 'react';
+// src/App.js
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components//navbar/Navbar.jsx';
-import Login from './components/login/Login.jsx';
-import Poll from './components/poll/Poll.jsx';
-import PollDetails from './components/polldetail/PollDetails.jsx';
-import NewPoll from './components/newpoll/NewPoll.jsx';
-import Leaderboard from './components/leaderboard/Leaderboard.jsx';
-import NotFound from './components/notfound/NotFound.jsx';
-import { handleInitialData } from './actions/shared.jsx';
+import { Routes, Route } from 'react-router-dom'; // Removed duplicate BrowserRouter import
+import Navbar from './components/navbar/Navbar';
+import Login from './components/login/Login';
+import Poll from './components/poll/Poll';
+import PollDetails from './components/polldetail/PollDetails';
+import NewPoll from './components/newpoll/NewPoll';
+import Leaderboard from './components/leaderboard/Leaderboard';
+import NotFound from './components/notfound/NotFound';
+import { handleInitialData } from './actions/shared'; // Adjusted the path to match JavaScript
 import './App.css';
+
 const App = () => {
   const dispatch = useDispatch();
   const authedUser = useSelector((state) => state.authedUser);
@@ -24,18 +25,16 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <div className="container">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Poll />} />
-          <Route path="/questions/:id" element={<PollDetails />} />
-          <Route path="/add" element={<NewPoll />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="container">
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Poll />} />
+        <Route path="/questions/:id" element={<PollDetails />} />
+        <Route path="/add" element={<NewPoll />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
   );
 };
 
