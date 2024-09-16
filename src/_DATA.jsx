@@ -1,4 +1,3 @@
-import placeholder from './images/placeholder.png';
 let users = {
     sarahedo: {
       id: 'sarahedo',
