@@ -32,6 +32,7 @@ function NewPoll() {
             value={optionOne}
             onChange={(e) => setOptionOne(e.target.value)}
             required
+            className="input-field"
           />
         </label>
         <label>
@@ -41,9 +42,10 @@ function NewPoll() {
             value={optionTwo}
             onChange={(e) => setOptionTwo(e.target.value)}
             required
+            className="input-field"
           />
         </label>
-        <button type="submit" disabled={!optionOne || !optionTwo}>
+        <button type="submit" disabled={!optionOne || !optionTwo} className="submit-btn">
           Submit
         </button>
       </form>

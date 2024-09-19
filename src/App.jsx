@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from './slices/usersSlice';
@@ -10,6 +10,8 @@ import NewPoll from './components/NewPoll';
 import Leaderboard from './components/Leaderboard';
 import Nav from './components/Nav';
 import NotFound from './components/NotFound';
+import PollDetail from './components/PollDetail';
+import Footer from './components/Footer';
 
 function App() {
   const dispatch = useDispatch();
@@ -31,12 +33,14 @@ function App() {
       {auth && <Nav />}
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={auth ? <Home /> : <Login />} />
+        <Route path="/" element={auth ? <Home /> : <Login />}/>
+        <Route path="/questions/:id" element={<PollDetail />} />
         <Route path="/questions/:id" element={auth ? <Poll /> : <Login />} />
         <Route path="/add" element={auth ? <NewPoll /> : <Login />} />
         <Route path="/leaderboard" element={auth ? <Leaderboard /> : <Login />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      {auth && <Footer />}
     </Router>
   );
 }
