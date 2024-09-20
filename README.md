@@ -26,6 +26,7 @@ This is a React application that uses Redux for state management and Jest for te
 ## Installation within main folder
 npm install
 npm run dev
+select user to sign in
 ## To run test
 npm test
 jest --watch #runs jest -o by default
