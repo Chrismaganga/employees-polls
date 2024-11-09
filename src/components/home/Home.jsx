@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import Poll from './Poll';
+import Poll from '../poll/Poll';
+import './Home.css';
+
 
 function Home() {
   const [showAnswered, setShowAnswered] = useState(false);

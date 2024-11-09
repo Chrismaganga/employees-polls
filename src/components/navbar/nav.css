@@ -1,0 +1,133 @@
+/* Nav.css */
+
+/* General Navbar Styling */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    padding: 15px 30px;
+    color: white;
+    font-family: Arial, sans-serif;
+    position: relative;
+  }
+  
+  .logo h2 {
+    margin: 0;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-links li {
+    font-size: 1rem;
+  }
+  
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .nav-links a:hover {
+    background-color: #0056b3;
+  }
+  
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .user-info span {
+    font-size: 1rem;
+  }
+  
+  .user-avatar {
+    border-radius: 50%;
+  }
+  
+  .logout-btn {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  /* Hamburger Button */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .hamburger .bar {
+    width: 30px;
+    height: 3px;
+    background-color: white;
+    border-radius: 5px;
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .nav-links {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      background-color: #007bff;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      display: none;
+    }
+  
+    .nav-links.active {
+      display: flex;
+    }
+  
+    .hamburger {
+      display: flex;
+    }
+  
+    .user-info {
+      display: none;
+    }
+  
+    .nav-links a {
+      padding: 12px;
+      width: 100%;
+      text-align: center;
+    }
+  
+    .logout-btn {
+      background-color: #ff4d4d;
+      border-radius: 4px;
+      padding: 8px 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .logo h2 {
+      font-size: 1.2rem;
+    }
+  
+    .nav-links a {
+      font-size: 0.9rem;
+    }
+  
+    .user-info span {
+      font-size: 0.9rem;
+    }
+  }
+  

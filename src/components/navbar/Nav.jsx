@@ -1,22 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../slices/authSlice';
+import { logout } from '../../slices/authSlice';
+import './Nav.css';
 
 function Nav() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authedUser = useSelector(state => state.auth.authedUser);
   const user = useSelector(state => state.users.users[authedUser]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(prev => !prev);
+  };
+
   return (
     <nav className="nav">
-      <ul className="nav-links">
+      <div className="logo">
+        <h2>Employee Polls</h2>
+      </div>
+      <button className="hamburger" onClick={toggleMobileMenu}>
+        <span className="bar"></span>
+        <span className="bar"></span>
+        <span className="bar"></span>
+      </button>
+      <ul className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
         <li>
           <NavLink to="/" end>Home</NavLink>
         </li>

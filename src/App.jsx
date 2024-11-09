@@ -3,15 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from './slices/usersSlice';
 import { fetchQuestions } from './slices/questionsSlice';
-import Login from './components/Login';
-import Home from './components/Home';
-import Poll from './components/Poll';
-import NewPoll from './components/NewPoll';
-import Leaderboard from './components/Leaderboard';
-import Nav from './components/Nav';
-import NotFound from './components/NotFound';
-import PollDetail from './components/PollDetail';
-import Footer from './components/Footer';
+import { Home, Nav, Leaderboard, Login, NewPoll, NotFound, Poll, PollDetail, Footer } from './components';
+
 
 function App() {
   const dispatch = useDispatch();
