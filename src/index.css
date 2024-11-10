@@ -1,40 +1,27 @@
-
-*,
-*::before,
-*::after {
+/* Basic reset */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Apply black background and white text globally */
-body {
-  background-color: black;
-  color: white;
-  font-family: Arial, sans-serif;
-  height: 100vh;
+html, body {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Ensures footer stays at the bottom */
+  background-color: #333;
 }
 
-/* Ensures no margin for body */
-body, html {
-  height: 100%;
-}
-
-/* Main container for the entire app */
-.main-container {
+/* Main content area */
+.main-content {
   flex: 1;
   padding: 20px;
 }
 
-/* Optionally, style links to make them visible against the black background */
-a {
-  color: #1e90ff; /* Blue color for links */
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
+/* Footer styles */
+.footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
 }

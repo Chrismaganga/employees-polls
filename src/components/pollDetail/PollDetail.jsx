@@ -1,71 +1,141 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { handleVote } from '../../slices/questionsSlice'; 
-import { useNavigate } from 'react-router-dom'; 
+// import { useParams, useNavigate } from 'react-router-dom';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { answerQuestion } from '../../slices/questionsSlice'; // Adjust the path as needed
+// import { useState } from 'react';
+// import './PollDetail.css';
 
-const PollDetail = ({ match }) => {
-  const dispatch = useDispatch();
+// function PollDetail() {
+//   const { id } = useParams();
+//   const navigate = useNavigate();
+//   const dispatch = useDispatch();
+//   const questions = useSelector(state => state.questions.questions);
+//   const users = useSelector(state => state.users.users);
+
+//   const poll = questions[id];
+//   const [voteStatus, setVoteStatus] = useState(null);
+
+//   if (!poll) {
+//     return <p>Poll not found</p>;
+//   }
+
+//   const author = users[poll.author];
+
+//   const handleVote = () => {
+//     dispatch(answerQuestion({ authedUser: 'currentUserId', qid: id, answer: 'optionOne' }))
+//       .then(() => {
+//         setVoteStatus('Thank you for voting!');
+//         setTimeout(() => {
+//           navigate('/');
+//         }, 2000); 
+//       });
+//   };
+
+//   return (
+//     <div className="poll-detail">
+//       <h2>{author.name} asks:</h2>
+//       <div className="poll-content">
+//         <p className="author">{poll.optionOne.text}</p>
+//         <p className="author">{poll.optionTwo.text}</p>
+//         <p className="timestamp">Created at: {new Date(poll.timestamp).toLocaleString()}</p>
+//       </div>
+//       <button className="vote-button" onClick={handleVote}>Vote</button>
+//       {voteStatus && <p className="vote-status">{voteStatus}</p>}
+//     </div>
+//   );
+// }
+
+// export default PollDetail;
+
+import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { answerQuestion } from '../../slices/questionsSlice'; // Adjust the path as needed
+import { useState, useEffect } from 'react';
+import './PollDetail.css';
+
+function PollDetail() {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const { id } = match.params; 
-  const question = useSelector((state) => state.questions.questions[id]); 
-  const authedUser = useSelector((state) => state.auth.authedUser); 
+  // Fetching questions and users from Redux store
+  const questions = useSelector(state => state.questions.questions);
+  const users = useSelector(state => state.users.users);
+  const authedUser = useSelector(state => state.users.authedUser); 
 
-  if (!question) {
-    return <div>Poll not found</div>;
+  const poll = questions[id];
+
+  const [voteStatus, setVoteStatus] = useState(null);
+  const [userVote, setUserVote] = useState(null);
+
+  useEffect(() => {
+    if (authedUser && poll) {
+      // Check if the current user has already voted
+      if (poll.optionOne.votes.includes(authedUser)) {
+        setUserVote('optionOne');
+      } else if (poll.optionTwo.votes.includes(authedUser)) {
+        setUserVote('optionTwo');
+      }
+    }
+  }, [authedUser, poll]);
+
+  if (!poll) {
+    return <p>Poll not found</p>;
   }
 
-  const { optionOne, optionTwo } = question;
-  const userVote = optionOne.votes.includes(authedUser)
-    ? 'optionOne'
-    : optionTwo.votes.includes(authedUser)
-    ? 'optionTwo'
-    : null; // Check if the user has voted
+  const author = users[poll.author];
 
-  // Handle voting
-  const handleVoteSubmit = (answer) => {
+  const handleVote = (option) => {
     if (!authedUser) {
-      // Optionally, navigate to login if the user is not authenticated
-      navigate('/login');
+      setVoteStatus("You need to log in to vote.");
       return;
     }
-    // Dispatch the vote action with the user's choice
-    dispatch(handleVote({ authedUser, qid: id, answer }));
+
+    dispatch(answerQuestion({ authedUser, qid: id, answer: option }))
+      .then(() => {
+        setVoteStatus('Thank you for voting!');
+        setTimeout(() => {
+          navigate('/');
+        }, 2000); // Redirect after 2 seconds
+      })
+      .catch(() => {
+        setVoteStatus('Error voting. Please try again.');
+      });
   };
+
+  const totalVotes = poll.optionOne.votes.length + poll.optionTwo.votes.length;
+  const optionOnePercent = totalVotes > 0 ? (poll.optionOne.votes.length / totalVotes) * 100 : 0;
+  const optionTwoPercent = totalVotes > 0 ? (poll.optionTwo.votes.length / totalVotes) * 100 : 0;
 
   return (
     <div className="poll-detail">
-      <h2>{question.author} asks:</h2>
-      <h3>Would you rather...</h3>
-      <div className="poll-options">
+      <h2>{author.name} asks:</h2>
+      <div className="poll-content">
+        <p className="author">{poll.optionOne.text}</p>
+        <p>{poll.optionOne.votes.length} vote(s) ({optionOnePercent.toFixed(1)}%)</p>
         <button
-          onClick={() => handleVoteSubmit('optionOne')}
-          disabled={userVote !== null} // Disable the button if the user already voted
-          className={`option-button ${userVote === 'optionOne' ? 'voted' : ''}`}
+          className={`vote-button ${userVote === 'optionOne' ? 'voted' : ''}`}
+          onClick={() => handleVote('optionOne')}
+          disabled={userVote !== null}
         >
-          {optionOne.text}
+          Vote for Option One
         </button>
+
+        <p className="author">{poll.optionTwo.text}</p>
+        <p>{poll.optionTwo.votes.length} vote(s) ({optionTwoPercent.toFixed(1)}%)</p>
         <button
-          onClick={() => handleVoteSubmit('optionTwo')}
-          disabled={userVote !== null} 
-          className={`option-button ${userVote === 'optionTwo' ? 'voted' : ''}`}
+          className={`vote-button ${userVote === 'optionTwo' ? 'voted' : ''}`}
+          onClick={() => handleVote('optionTwo')}
+          disabled={userVote !== null}
         >
-          {optionTwo.text}
+          Vote for Option Two
         </button>
+
+        <p className="timestamp">Created at: {new Date(poll.timestamp).toLocaleString()}</p>
       </div>
 
-      {userVote && (
-        <div className="poll-result">
-          <h3>Your Vote: {userVote === 'optionOne' ? optionOne.text : optionTwo.text}</h3>
-          {/* Optionally display poll results here */}
-          <div>
-            <p>{optionOne.text}: {optionOne.votes.length} votes</p>
-            <p>{optionTwo.text}: {optionTwo.votes.length} votes</p>
-          </div>
-        </div>
-      )}
+      {voteStatus && <p className="vote-status">{voteStatus}</p>}
     </div>
   );
-};
+}
 
 export default PollDetail;

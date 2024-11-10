@@ -6,7 +6,6 @@ import './Poll.css';
 function Poll({ question }) {
   const users = useSelector(state => state.users.users);
 
-  // If the question is not found, show a message
   if (!question) {
     return (
       <div className="poll-not-found">
@@ -38,11 +37,12 @@ function Poll({ question }) {
         <h3 className="poll-title">Would You Rather</h3>
         <p className="poll-option">{`...${optionOne.text}...`}</p>
         <p className="poll-option">{`...${optionTwo.text}...`}</p>
-
-        <Link to={`/questions/${question.id}`} className="poll-link">
-          View Poll
-        </Link>
       </div>
+
+      {/* Ensure the Link is not nested within another <a> tag */}
+      <Link to={`/questions/${question.id}`} className="poll-link">
+        View Poll
+      </Link>
     </div>
   );
 }

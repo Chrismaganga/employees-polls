@@ -22,7 +22,7 @@ function App() {
   }, [usersStatus, questionsStatus, dispatch]);
 
   return (
-    <Router>
+    <Router class="main-content">
       {auth && <Nav />}
       <Routes>
         <Route path="/login" element={<Login />} />
