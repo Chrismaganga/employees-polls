@@ -1,55 +1,8 @@
-// import { useParams, useNavigate } from 'react-router-dom';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { answerQuestion } from '../../slices/questionsSlice'; // Adjust the path as needed
-// import { useState } from 'react';
-// import './PollDetail.css';
-
-// function PollDetail() {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-//   const dispatch = useDispatch();
-//   const questions = useSelector(state => state.questions.questions);
-//   const users = useSelector(state => state.users.users);
-
-//   const poll = questions[id];
-//   const [voteStatus, setVoteStatus] = useState(null);
-
-//   if (!poll) {
-//     return <p>Poll not found</p>;
-//   }
-
-//   const author = users[poll.author];
-
-//   const handleVote = () => {
-//     dispatch(answerQuestion({ authedUser: 'currentUserId', qid: id, answer: 'optionOne' }))
-//       .then(() => {
-//         setVoteStatus('Thank you for voting!');
-//         setTimeout(() => {
-//           navigate('/');
-//         }, 2000); 
-//       });
-//   };
-
-//   return (
-//     <div className="poll-detail">
-//       <h2>{author.name} asks:</h2>
-//       <div className="poll-content">
-//         <p className="author">{poll.optionOne.text}</p>
-//         <p className="author">{poll.optionTwo.text}</p>
-//         <p className="timestamp">Created at: {new Date(poll.timestamp).toLocaleString()}</p>
-//       </div>
-//       <button className="vote-button" onClick={handleVote}>Vote</button>
-//       {voteStatus && <p className="vote-status">{voteStatus}</p>}
-//     </div>
-//   );
-// }
-
-// export default PollDetail;
-
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { answerQuestion } from '../../slices/questionsSlice'; // Adjust the path as needed
 import { useState, useEffect } from 'react';
+import configureStore from '../../store'; // Adjust the path as needed
 import './PollDetail.css';
 
 function PollDetail() {

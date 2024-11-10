@@ -1,69 +1,12 @@
-// import '@testing-library/jest-dom';
-// import { render, screen, fireEvent } from '@testing-library/react';
-// import { Provider } from 'react-redux';
-// import { BrowserRouter } from 'react-router-dom';
-// import Login from '../components/login/Login';
-// import configureStore from 'redux-mock-store';
-// import { setAuthedUser } from '../../slices/authSlice';
 
-// // Mock `useNavigate` from 'react-router-dom'
-// jest.mock('react-router-dom', () => ({
-//   useNavigate: jest.fn(),
-// }));
-
-// const mockStore = configureStore([]);
-
-// describe('Login Component', () => {
-//   let store;
-//   let navigate;
-
-//   beforeEach(() => {
-//     navigate = jest.fn();
-//     store = mockStore({
-//       users: {
-//         users: {
-//           user1: { id: 'user1', name: 'John Doe', avatarURL: '/path/to/avatar1.jpg' },
-//         },
-//         status: 'idle',
-//       },
-//     });
-
-//     // Mock the dispatch behavior
-//     jest.spyOn(store, 'dispatch');
-//   });
-
-//   it('should login successfully and navigate to home page', () => {
-//     render(
-//       <Provider store={store}>
-//         <BrowserRouter>
-//           <Login />
-//         </BrowserRouter>
-//       </Provider>
-//     );
-
-//     // Simulate selecting a user
-//     fireEvent.change(screen.getByLabelText('Sign In'), { target: { value: 'user1' } });
-
-//     // Ensure login button is enabled after selection
-//     const loginButton = screen.getByText('Login');
-//     expect(loginButton).toBeEnabled();
-
-//     // Simulate form submission
-//     fireEvent.click(loginButton);
-
-//     // Check if setAuthedUser action was called
-//     expect(store.dispatch).toHaveBeenCalledWith(setAuthedUser('user1'));
-//     expect(navigate).toHaveBeenCalledWith('/');
-//   });
-// });
 import '@testing-library/jest-dom';
 
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { BrowserRouter } from 'react-router-dom';
-import Login from '../components/Login';
+import Login from '../components/Login/Login';
 import { Provider } from 'react-redux';
-import React from 'react'; // <-- Add this import
+import React from 'react';
 import configureStore from 'redux-mock-store';
 
 const mockStore = configureStore([]);
