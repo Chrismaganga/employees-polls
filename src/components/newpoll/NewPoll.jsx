@@ -67,5 +67,4 @@ function NewPoll() {
     </div>
   );
 }
-
 export default NewPoll;

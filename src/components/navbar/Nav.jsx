@@ -35,7 +35,7 @@ function Nav() {
           <NavLink to="/" end>Home</NavLink>
         </li>
         <li>
-          <NavLink to="/add">New Poll</NavLink>
+          <NavLink to="/add">NewPoll</NavLink>
         </li>
         <li>
           <NavLink to="/leaderboard">Leaderboard</NavLink>
@@ -44,7 +44,7 @@ function Nav() {
       <div className="user-info">
         <span>Hello, {user.name}</span>
         <img 
-          src={user.avatarURL || "src/images/placeholder.png"} 
+          src={user.avatarURL}
           alt={`Avatar of ${user.name}`} 
           className="user-avatar"
           width="50"
@@ -55,5 +55,4 @@ function Nav() {
     </nav>
   );
 }
-
 export default Nav;

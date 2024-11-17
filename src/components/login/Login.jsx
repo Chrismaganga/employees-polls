@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAuthedUser } from '../../slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import { enableVotingRights } from '../../slices/votingSlice';
 
 function Login() {
   const users = useSelector(state => state.users.users);
@@ -19,6 +20,12 @@ function Login() {
     }
   };
 
+  useEffect(() => {
+    if (selectedUser) {
+      dispatch(enableVotingRights(selectedUser));
+    }
+  }, [selectedUser, dispatch]);
+
   if (usersStatus === 'loading') {
     return <div>Loading...</div>;
   }
@@ -34,7 +41,7 @@ function Login() {
           onChange={(e) => setSelectedUser(e.target.value)}
         >
           <option value="" disabled>Select User</option>
-          {Object.values(users).map(user => (
+          {users && Object.values(users).map(user => (
             <option key={user.id} value={user.id}>
               {user.name}
             </option>

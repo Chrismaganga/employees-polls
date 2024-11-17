@@ -1,8 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { answerQuestion } from '../../slices/questionsSlice'; // Adjust the path as needed
+import { answerQuestion } from '../../slices/questionsSlice'; 
 import { useState, useEffect } from 'react';
-import configureStore from '../../store'; // Adjust the path as needed
 import './PollDetail.css';
 
 function PollDetail() {
@@ -15,7 +14,7 @@ function PollDetail() {
   const users = useSelector(state => state.users.users);
   const authedUser = useSelector(state => state.users.authedUser); 
 
-  const poll = questions[id];
+  const poll = questions ? questions[id] : null;
 
   const [voteStatus, setVoteStatus] = useState(null);
   const [userVote, setUserVote] = useState(null);
@@ -35,14 +34,16 @@ function PollDetail() {
     return <p>Poll not found</p>;
   }
 
-  const author = users[poll.author];
+  const author = poll ? users[poll.author] : null;
 
   const handleVote = (option) => {
     if (!authedUser) {
       setVoteStatus("You need to log in to vote.");
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000); // Redirect to login after 2 seconds
       return;
     }
-
     dispatch(answerQuestion({ authedUser, qid: id, answer: option }))
       .then(() => {
         setVoteStatus('Thank you for voting!');
@@ -54,34 +55,37 @@ function PollDetail() {
         setVoteStatus('Error voting. Please try again.');
       });
   };
-
   const totalVotes = poll.optionOne.votes.length + poll.optionTwo.votes.length;
   const optionOnePercent = totalVotes > 0 ? (poll.optionOne.votes.length / totalVotes) * 100 : 0;
   const optionTwoPercent = totalVotes > 0 ? (poll.optionTwo.votes.length / totalVotes) * 100 : 0;
 
   return (
     <div className="poll-detail">
-      <h2>{author.name} asks:</h2>
+      <h2>{author ? author.name : 'Unknown'} asks:</h2>
       <div className="poll-content">
         <p className="author">{poll.optionOne.text}</p>
         <p>{poll.optionOne.votes.length} vote(s) ({optionOnePercent.toFixed(1)}%)</p>
-        <button
-          className={`vote-button ${userVote === 'optionOne' ? 'voted' : ''}`}
-          onClick={() => handleVote('optionOne')}
-          disabled={userVote !== null}
-        >
-          Vote for Option One
-        </button>
+        {authedUser && (
+          <button
+            className={`vote-button ${userVote === 'optionOne' ? 'voted' : ''}`}
+            onClick={() => handleVote('optionOne')}
+            disabled={userVote !== null}
+          >
+            Vote for Option One
+          </button>
+        )}
 
         <p className="author">{poll.optionTwo.text}</p>
         <p>{poll.optionTwo.votes.length} vote(s) ({optionTwoPercent.toFixed(1)}%)</p>
-        <button
-          className={`vote-button ${userVote === 'optionTwo' ? 'voted' : ''}`}
-          onClick={() => handleVote('optionTwo')}
-          disabled={userVote !== null}
-        >
-          Vote for Option Two
-        </button>
+        {authedUser && (
+          <button
+            className={`vote-button ${userVote === 'optionTwo' ? 'voted' : ''}`}
+            onClick={() => handleVote('optionTwo')}
+            disabled={userVote !== null}
+          >
+            Vote for Option Two
+          </button>
+        )}
 
         <p className="timestamp">Created at: {new Date(poll.timestamp).toLocaleString()}</p>
       </div>

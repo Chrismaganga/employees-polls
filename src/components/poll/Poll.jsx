@@ -39,7 +39,7 @@ function Poll({ question }) {
         <p className="poll-option">{`...${optionTwo.text}...`}</p>
       </div>
 
-      {/* Ensure the Link is not nested within another <a> tag */}
+     
       <Link to={`/questions/${question.id}`} className="poll-link">
         View Poll
       </Link>
