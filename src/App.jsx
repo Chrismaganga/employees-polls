@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from './slices/usersSlice';
 import { fetchQuestions } from './slices/questionsSlice';
 import { Home, Nav, Leaderboard, Login, NewPoll, NotFound, Poll, PollDetail, Footer } from './components';
-
+import './App.css';
 
 function App() {
   const dispatch = useDispatch();
@@ -22,18 +22,20 @@ function App() {
   }, [usersStatus, questionsStatus, dispatch]);
 
   return (
-    <Router class="main-content">
-      {auth && <Nav />}
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={auth ? <Home /> : <Login />}/>
-        <Route path="/questions/:id" element={<PollDetail />} />
-        <Route path="/questions/:id" element={auth ? <Poll /> : <Login />} />
-        <Route path="/add" element={auth ? <NewPoll /> : <Login />} />
-        <Route path="/leaderboard" element={auth ? <Leaderboard /> : <Login />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      {auth && <Footer />}
+    <Router>
+      <div>
+        {auth && <Nav />}
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={auth ? <Home /> : <Login />} />
+          <Route path="/questions/:id" element={<PollDetail />} />
+          <Route path="/questions/:id" element={auth ? <Poll /> : <Login />} />
+          <Route path="/add" element={auth ? <NewPoll /> : <Login />} />
+          <Route path="/leaderboard" element={auth ? <Leaderboard /> : <Login />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        {auth && <Footer />}
+      </div>
     </Router>
   );
 }

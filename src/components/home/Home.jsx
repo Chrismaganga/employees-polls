@@ -47,7 +47,7 @@ function Home() {
       <div className="polls-list">
         {showAnswered ? (
           answered.length > 0 ? (
-            <ul>
+            <ul className='question'>
               {answered.map(question => (
                 <li key={question.id}>
                   <Link to={`/questions/${question.id}`}>
@@ -57,13 +57,13 @@ function Home() {
               ))}
             </ul>
           ) : (
-            <p>No answered polls available</p>
+            <p className='para'>No answered polls available</p>
           )
         ) : (
           unanswered.length > 0 ? (
-            <ul>
+            <ul className='answers'>
               {unanswered.map(question => (
-                <li key={question.id}>
+                <li key={question.id} className='list'>
                   <Link to={`/questions/${question.id}`}>
                     <Poll question={question} />
                   </Link>
@@ -71,7 +71,7 @@ function Home() {
               ))}
             </ul>
           ) : (
-            <p>No unanswered polls available</p>
+            <p className='para'>No unanswered polls available</p>
           )
         )}
       </div>

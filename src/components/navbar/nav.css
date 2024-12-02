@@ -14,6 +14,9 @@
   
   .logo h2 {
     margin: 0;
+    font-size: 2rem;
+    color: #0056b3;
+    padding: 0;
   }
   
   .nav-links {

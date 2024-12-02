@@ -47,9 +47,9 @@ function Leaderboard() {
           value={sortBy}
           onChange={handleSortChange}
         >
-          <option value="score">Sort by Score</option>
-          <option value="questionsAnswered">Sort by Questions Answered</option>
-          <option value="questionsAsked">Sort by Questions Asked</option>
+          <option value="score" className='score'>Sort by Score</option>
+          <option value="questionsAnswered" className='questionsAnswered'>Sort by Questions Answered</option>
+          <option value="questionsAsked" className='questionsAsked'>Sort by Questions Asked</option>
         </select>
       </div>
 

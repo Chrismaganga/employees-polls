@@ -51,17 +51,27 @@
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 10px;
+    color: #003f75;
+    padding: auto;
   }
   
   .poll-option {
     font-size: 1.1rem;
     margin-bottom: 10px;
-    color: #555;
+    color: #a30909;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: aqua;
+    width: 90%;
+    margin: 0 auto; /* Center the element horizontally */
+    text-align: center; /* Center the text inside the element */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  
   .poll-link {
     display: inline-block;
-    width: 50%;
+    width: 20%;
     padding: 15px 20px;
     background-color: #007bff;
     color: #fff;
@@ -69,11 +79,8 @@
     border-radius: 5px;
     font-weight: bold;
     transition: background-color 0.3s, transform 0.3s;
-    
-    /* Center the content of the link (text) */
+    margin: 10px auto; /* Center the link horizontally */
     text-align: center; /* Centers text horizontally */
-    
-    /* Add flex to vertically center the content */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,7 +88,7 @@
   
   
   .poll-link:hover {
-    background-color: #0056b3;
+    background-color: #3a78bb;
     transform: translateY(-2px);
   }
   

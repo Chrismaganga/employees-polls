@@ -4,8 +4,14 @@
   margin: 0 auto;
   padding: 20px;
   background-color: #fff;
+  cursor: pointer;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: #130879;
 }
 
 /* Poll content */
@@ -56,7 +62,7 @@
 /* Highlight selected vote option */
 .vote-button.voted {
   background-color: #e0e0e0;
-  border-color: #ccc;
+  border-color: #130879;
   cursor: not-allowed;
 }
 
@@ -75,4 +81,34 @@
   color: #777;
   margin-top: 15px;
   text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .poll-detail {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .vote-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+  }
+
+  .poll-content p {
+    font-size: 1em;
+  }
+
+  .author {
+    font-size: 1em;
+  }
+
+  .vote-status {
+    font-size: 1em;
+  }
+
+  .timestamp {
+    font-size: 0.8em;
+  }
 }
