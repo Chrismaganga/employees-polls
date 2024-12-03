@@ -28,8 +28,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={auth ? <Home /> : <Login />} />
-          <Route path="/questions/:id" element={<PollDetail />} />
-          <Route path="/questions/:id" element={auth ? <Poll /> : <Login />} />
+          <Route path="/questions/:id" element={auth ? <PollDetail /> : <Login />} />
           <Route path="/add" element={auth ? <NewPoll /> : <Login />} />
           <Route path="/leaderboard" element={auth ? <Leaderboard /> : <Login />} />
           <Route path="*" element={<NotFound />} />

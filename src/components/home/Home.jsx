@@ -11,7 +11,7 @@ function Home() {
   const users = useSelector(state => state.users.users);
   const questions = useSelector(state => state.questions.questions);
 
-  const answeredIds = Object.keys(users[authedUser].answers);
+  const answeredIds = users[authedUser] ? Object.keys(users[authedUser].answers) : [];
   const unanswered = Object.values(questions)
     .filter(q => !answeredIds.includes(q.id))
     .sort((a, b) => b.timestamp - a.timestamp);

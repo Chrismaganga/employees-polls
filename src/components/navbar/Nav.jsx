@@ -42,17 +42,24 @@ function Nav() {
         </li>
       </ul>
       <div className="user-info">
-        <span>Hello, {user.name}</span>
-        <img 
-          src={user.avatarURL}
-          alt={`Avatar of ${user.name}`} 
-          className="user-avatar"
-          width="50"
-          height="50"
-        />
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        {user ? (
+          <>
+            <span>Hello, {user.name}</span>
+            <img 
+              src={user.avatarURL}
+              alt={`Avatar of ${user.name}`} 
+              className="user-avatar"
+              width="50"
+              height="50"
+            />
+            <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          </>
+        ) : (
+          <span>Loading...</span>
+        )}
       </div>
     </nav>
   );
 }
+
 export default Nav;

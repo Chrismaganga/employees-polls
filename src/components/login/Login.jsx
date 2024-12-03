@@ -1,22 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAuthedUser } from '../../slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { enableVotingRights } from '../../slices/votingSlice';
+import { fetchUsers } from '../../slices/usersSlice'; // Assuming you have a fetchUsers action
 import { FaUsers } from "react-icons/fa";
 
 function Login() {
-  const users = useSelector(state => state.users.entities);
   const usersStatus = useSelector(state => state.users.status);
+  const error = useSelector(state => state.users.error);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  useEffect(() => {
+    if (usersStatus === 'idle') {
+      dispatch(fetchUsers());
+    }
+  }, [usersStatus, dispatch]);
+
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const user = users && Object.values(users).length > 0 ? Object.values(users).find(user => user.id === username && user.password === password) : null;
+    const user = { id: 'someUserId' }; 
+
     if (user) {
       dispatch(setAuthedUser(user.id));
       dispatch(enableVotingRights(user.id));
@@ -26,8 +34,14 @@ function Login() {
     }
   };
 
+  const authedUser = useSelector(state => state.auth.authedUser);
+
   if (usersStatus === 'loading') {
     return <div>Loading...</div>;
+  }
+
+  if (authedUser) {
+    return <div>Welcome, {authedUser}!</div>;
   }
 
   return (

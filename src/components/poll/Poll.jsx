@@ -15,6 +15,14 @@ function Poll({ question }) {
   }
 
   const author = users[question.author];
+
+  if (!author) {
+    return (
+      <div className="poll-not-found">
+        <p>Author not found</p>
+      </div>
+    );
+  }
   const { optionOne, optionTwo } = question;
 
   return (
@@ -33,16 +41,14 @@ function Poll({ question }) {
         </div>
       </div>
 
+    <div className="poll-link" onClick={() => window.location.href = `/questions/${question.id}`}>
       <div className="poll-content">
         <h3 className="poll-title">Would You Rather</h3>
         <p className="poll-option">{`...${optionOne.text}...`}</p>
         <p className="poll-option">{`...${optionTwo.text}...`}</p>
       </div>
-
-     
-      <Link to={`/questions/${question.id}`} className="poll-link">
-        View Poll
-      </Link>
+      View Poll
+    </div>
     </div>
   );
 }
