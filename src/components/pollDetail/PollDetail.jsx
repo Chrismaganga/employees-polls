@@ -13,6 +13,8 @@ function PollDetail() {
   const questions = useSelector(state => state.questions.questions);
   const users = useSelector(state => state.users.users);
   const authedUser = useSelector(state => state.users.authedUser); 
+  const canVote = useSelector(state => state.voting.canVote);
+  const user = useSelector(state => state.voting.user);
 
   const poll = questions ? questions[id] : null;
 
@@ -44,6 +46,12 @@ function PollDetail() {
       }, 2000); // Redirect to login after 2 seconds
       return;
     }
+
+    if (!canVote) {
+      setVoteStatus("You don't have voting rights.");
+      return;
+    }
+
     dispatch(answerQuestion({ authedUser, qid: id, answer: option }))
       .then(() => {
         setVoteStatus('Thank you for voting!');

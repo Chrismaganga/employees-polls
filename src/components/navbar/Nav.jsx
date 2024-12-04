@@ -1,63 +1,56 @@
-import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../slices/authSlice';
+import { resetVotes } from '../../slices/votingSlice';
 import './Nav.css';
 
 function Nav() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const authedUser = useSelector(state => state.auth.authedUser);
-  const user = useSelector(state => state.users.users[authedUser]);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const userProfile = useSelector((state) => state.auth.userProfile);
+  const users = useSelector((state) => state.users.users);
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(resetVotes());
     navigate('/login');
   };
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(prev => !prev);
-  };
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const currentUser = users[userProfile?.id];
 
   return (
-    <nav className="nav">
-      <div className="logo">
-        <h2>Employee Polls</h2>
+    <nav className="navbar">
+      <div className="nav-brand">
+        <Link to="/" className="brand-link">
+          Employee Polls
+        </Link>
       </div>
-      <button className="hamburger" onClick={toggleMobileMenu}>
-        <span className="bar"></span>
-        <span className="bar"></span>
-        <span className="bar"></span>
-      </button>
-      <ul className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-        <li>
-          <NavLink to="/" end>Home</NavLink>
-        </li>
-        <li>
-          <NavLink to="/add">NewPoll</NavLink>
-        </li>
-        <li>
-          <NavLink to="/leaderboard">Leaderboard</NavLink>
-        </li>
-      </ul>
-      <div className="user-info">
-        {user ? (
-          <>
-            <span>Hello, {user.name}</span>
-            <img 
-              src={user.avatarURL}
-              alt={`Avatar of ${user.name}`} 
-              className="user-avatar"
-              width="50"
-              height="50"
-            />
-            <button className="logout-btn" onClick={handleLogout}>Logout</button>
-          </>
-        ) : (
-          <span>Loading...</span>
-        )}
+
+      <div className="nav-links">
+        <Link to="/" className="nav-link">Home</Link>
+        <Link to="/leaderboard" className="nav-link">Leaderboard</Link>
+        <Link to="/add" className="nav-link">New Poll</Link>
       </div>
+      
+      {currentUser && (
+        <div className="user-profile">
+          <img
+            src={currentUser.avatarURL}
+            alt={`Avatar of ${currentUser.name}`}
+            className="user-avatar"
+          />
+          <span className="user-name">{currentUser.name}</span>
+          <button onClick={handleLogout} className="logout-button">
+            Logout
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
