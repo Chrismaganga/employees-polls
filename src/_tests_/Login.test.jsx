@@ -1,98 +1,95 @@
-
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { BrowserRouter } from 'react-router-dom';
+import Login from '../components/login/Login';
+import authReducer from '../slices/authSlice';
 import '@testing-library/jest-dom';
 
-import { fireEvent, render, screen } from '@testing-library/react';
-
-import { BrowserRouter } from 'react-router-dom';
-import Login from '../components/Login/Login';
-import { Provider } from 'react-redux';
-import React from 'react';
-import configureStore from 'redux-mock-store';
-
-const mockStore = configureStore([]);
+const mockStore = configureStore({
+  reducer: {
+    auth: authReducer,
+  },
+});
 
 describe('Login Component', () => {
-  let store;
-
-  beforeEach(() => {
-    store = mockStore({
-      users: {
-        users: {
-          johndoe: {
-            id: 'johndoe',
-            name: 'John Doe',
-            avatarURL: '/path/to/avatar.jpg',
-          },
-          janedoe: {
-            id: 'janedoe',
-            name: 'Jane Doe',
-            avatarURL: '/path/to/avatar2.jpg',
-          },
-        },
-        status: 'succeeded',
-      },
-      auth: { authedUser: null },
-    });
-  });
-
   it('renders without crashing', () => {
     render(
-      <Provider store={store}>
+      <Provider store={mockStore}>
         <BrowserRouter>
           <Login />
         </BrowserRouter>
       </Provider>
     );
-    expect(screen.getByText('Welcome to Employee Polls')).toBeInTheDocument();
-    expect(screen.getByLabelText('Sign In')).toBeInTheDocument();
+    expect(screen.getByText('Employee Polls')).toBeInTheDocument();
+    expect(screen.getByLabelText('Username')).toBeInTheDocument();
+    expect(screen.getByLabelText('Password')).toBeInTheDocument();
   });
 
-  it('displays user options and allows selection', () => {
+  it('handles form input correctly', () => {
     render(
-      <Provider store={store}>
+      <Provider store={mockStore}>
         <BrowserRouter>
           <Login />
         </BrowserRouter>
       </Provider>
     );
 
-    // Check if users are listed in the select dropdown
-    expect(screen.getByText('Select User')).toBeInTheDocument();
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('Jane Doe')).toBeInTheDocument();
+    const usernameInput = screen.getByLabelText('Username');
+    const passwordInput = screen.getByLabelText('Password');
 
-    // Simulate selecting a user
-    fireEvent.change(screen.getByLabelText('Sign In'), { target: { value: 'johndoe' } });
-    expect(screen.getByRole('button', { name: 'Login' })).not.toBeDisabled();
+    fireEvent.change(usernameInput, { target: { value: 'testuser' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+
+    expect(usernameInput.value).toBe('testuser');
+    expect(passwordInput.value).toBe('password123');
   });
 
-  it('displays avatar preview when user is selected', () => {
+  it('handles form submission', () => {
+    const mockDispatch = jest.fn();
+    const mockNavigate = jest.fn();
+
     render(
-      <Provider store={store}>
+      <Provider store={mockStore}>
         <BrowserRouter>
           <Login />
         </BrowserRouter>
       </Provider>
     );
 
-    // Simulate selecting a user
-    fireEvent.change(screen.getByLabelText('Sign In'), { target: { value: 'johndoe' } });
+    fireEvent.change(screen.getByLabelText('Username'), {
+      target: { value: 'testuser' },
+    });
+    fireEvent.change(screen.getByLabelText('Password'), {
+      target: { value: 'password123' },
+    });
 
-    // Check if the avatar is displayed
-    const avatar = screen.getByAltText("John Doe's avatar");
-    expect(avatar).toBeInTheDocument();
-    expect(avatar).toHaveAttribute('src', '/path/to/avatar.jpg');
+    const loginButton = screen.getByRole('button', { name: /login/i });
+    expect(loginButton).toBeEnabled();
+    fireEvent.click(loginButton);
   });
 
-  it('disables the login button if no user is selected', () => {
+  it('shows error message for invalid credentials', async () => {
+    const mockAlert = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    
     render(
-      <Provider store={store}>
+      <Provider store={mockStore}>
         <BrowserRouter>
           <Login />
         </BrowserRouter>
       </Provider>
     );
 
-    expect(screen.getByRole('button', { name: 'Login' })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Username'), {
+      target: { value: 'invalid' },
+    });
+    fireEvent.change(screen.getByLabelText('Password'), {
+      target: { value: 'wrong' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+    expect(mockAlert).toHaveBeenCalledWith('Invalid username or password');
+    mockAlert.mockRestore();
   });
 });

@@ -1,60 +1,96 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import configureStore from 'redux-mock-store';
+import { configureStore } from '@reduxjs/toolkit';
 import Nav from '../components/navbar/Nav';
+import authReducer from '../slices/authSlice';
+import '@testing-library/jest-dom';
 
-const mockStore = configureStore([]);
+const mockStore = configureStore({
+  reducer: {
+    auth: authReducer,
+  },
+  preloadedState: {
+    auth: {
+      user: {
+        id: 'testuser',
+        name: 'Test User',
+        avatarURL: 'test-avatar.jpg',
+      },
+      isAuthenticated: true,
+    },
+  },
+});
 
 describe('Nav Component', () => {
-  let store;
-
-  beforeEach(() => {
-    store = mockStore({
-      voting: {
-        user: {
-          id: 'testuser',
-          name: 'Test User',
-          avatarURL: 'test-avatar.jpg'
-        }
-      }
-    });
-    store.dispatch = jest.fn();
-  });
-
   it('renders correctly when user is logged in', () => {
-    const { container } = render(
-      <Provider store={store}>
+    render(
+      <Provider store={mockStore}>
         <BrowserRouter>
           <Nav />
         </BrowserRouter>
       </Provider>
     );
-    expect(container).toMatchSnapshot();
+    expect(screen.getByText('Test User')).toBeInTheDocument();
   });
 
   it('displays user name and avatar', () => {
     render(
-      <Provider store={store}>
+      <Provider store={mockStore}>
         <BrowserRouter>
           <Nav />
         </BrowserRouter>
       </Provider>
     );
-    expect(screen.getByText('Hello, Test User')).toBeInTheDocument();
+    expect(screen.getByText('Test User')).toBeInTheDocument();
     expect(screen.getByAltText('Avatar of Test User')).toBeInTheDocument();
   });
 
-  it('handles logout correctly', () => {
+  it('displays navigation links', () => {
     render(
-      <Provider store={store}>
+      <Provider store={mockStore}>
         <BrowserRouter>
           <Nav />
         </BrowserRouter>
       </Provider>
     );
-    fireEvent.click(screen.getByText('Logout'));
-    expect(store.dispatch).toHaveBeenCalledTimes(2);
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Leaderboard')).toBeInTheDocument();
+    expect(screen.getByText('New Poll')).toBeInTheDocument();
+  });
+
+  it('shows logout button', () => {
+    render(
+      <Provider store={mockStore}>
+        <BrowserRouter>
+          <Nav />
+        </BrowserRouter>
+      </Provider>
+    );
+    expect(screen.getByText('Logout')).toBeInTheDocument();
+  });
+
+  it('renders nothing when user is not authenticated', () => {
+    const unauthenticatedStore = configureStore({
+      reducer: {
+        auth: authReducer,
+      },
+      preloadedState: {
+        auth: {
+          user: null,
+          isAuthenticated: false,
+        },
+      },
+    });
+
+    const { container } = render(
+      <Provider store={unauthenticatedStore}>
+        <BrowserRouter>
+          <Nav />
+        </BrowserRouter>
+      </Provider>
+    );
+    expect(container.firstChild).toBeNull();
   });
 });

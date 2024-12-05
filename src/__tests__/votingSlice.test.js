@@ -2,77 +2,81 @@ import votingReducer, {
   setUser,
   vote,
   resetVotes,
-  enableVotingRights
+  enableVotingRights,
 } from '../slices/votingSlice';
 
 describe('votingSlice', () => {
-  const initialState = {
-    votes: {},
-    user: null,
-    canVote: false
-  };
-
   it('should handle initial state', () => {
-    expect(votingReducer(undefined, { type: 'unknown' })).toEqual(initialState);
+    expect(votingReducer(undefined, { type: 'unknown' })).toEqual({
+      votes: {},
+      canVote: false,
+      user: null,
+    });
   });
 
   it('should handle setUser', () => {
-    const user = { id: 'testuser', name: 'Test User' };
+    const initialState = {
+      votes: {},
+      canVote: false,
+      user: null,
+    };
+    const user = { id: 'user1', name: 'Test User' };
     const actual = votingReducer(initialState, setUser(user));
     expect(actual.user).toEqual(user);
+    expect(actual.canVote).toBe(true);
   });
 
   it('should handle vote when user has voting rights', () => {
     const stateWithUser = {
-      ...initialState,
-      user: { id: 'testuser' },
-      canVote: true
+      votes: {},
+      canVote: true,
+      user: { id: 'user1' },
     };
     const votePayload = {
-      userId: 'testuser',
-      questionId: 'question1',
-      option: 'optionOne'
+      pollId: 'poll1',
+      option: 'optionOne',
     };
     const actual = votingReducer(stateWithUser, vote(votePayload));
     expect(actual.votes).toEqual({
-      'question1': 'optionOne'
+      'poll1': 'optionOne',
     });
   });
 
   it('should not handle vote when user has no voting rights', () => {
-    const stateWithUser = {
-      ...initialState,
-      user: { id: 'testuser' },
-      canVote: false
+    const stateWithoutRights = {
+      votes: {},
+      canVote: false,
+      user: { id: 'user1' },
     };
     const votePayload = {
-      userId: 'testuser',
-      questionId: 'question1',
-      option: 'optionOne'
+      pollId: 'poll1',
+      option: 'optionOne',
     };
-    const actual = votingReducer(stateWithUser, vote(votePayload));
+    const actual = votingReducer(stateWithoutRights, vote(votePayload));
     expect(actual.votes).toEqual({});
   });
 
   it('should handle resetVotes', () => {
     const stateWithVotes = {
-      ...initialState,
-      votes: { 'question1': 'optionOne' },
-      canVote: true
+      votes: { 'poll1': 'optionOne' },
+      canVote: true,
+      user: { id: 'user1' },
     };
     const actual = votingReducer(stateWithVotes, resetVotes());
-    expect(actual).toEqual(initialState);
+    expect(actual).toEqual({
+      votes: {},
+      canVote: false,
+      user: null,
+    });
   });
 
   it('should handle enableVotingRights', () => {
-    const stateWithUser = {
-      ...initialState,
-      user: { id: 'testuser' }
+    const stateWithoutRights = {
+      votes: {},
+      canVote: false,
+      user: { id: 'user1' },
     };
-    const actual = votingReducer(
-      stateWithUser,
-      enableVotingRights({ userId: 'testuser' })
-    );
+    const actual = votingReducer(stateWithoutRights, enableVotingRights());
     expect(actual.canVote).toBe(true);
   });
 });

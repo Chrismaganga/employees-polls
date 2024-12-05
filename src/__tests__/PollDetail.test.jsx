@@ -1,77 +1,48 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import configureStore from 'redux-mock-store';
+import { configureStore } from '@reduxjs/toolkit';
+import '@testing-library/jest-dom';
 import PollDetail from '../components/pollDetail/PollDetail';
+import { BrowserRouter } from 'react-router-dom';
+import votingReducer from '../slices/votingSlice';
 
-const mockStore = configureStore([]);
+const mockPoll = {
+  id: 'test123',
+  optionOne: { text: 'Test Option One', votes: [] },
+  optionTwo: { text: 'Test Option Two', votes: [] },
+  author: 'testUser'
+};
 
-// Mock useParams
+const mockStore = configureStore({
+  reducer: {
+    voting: votingReducer
+  },
+  preloadedState: {
+    voting: {
+      polls: {
+        'test123': mockPoll
+      },
+      authedUser: 'testUser'
+    }
+  }
+});
+
+// Mock the useParams hook
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useParams: () => ({
-    id: 'test-poll-id'
-  })
+  useParams: () => ({ id: 'test123' })
 }));
 
 describe('PollDetail Component', () => {
-  let store;
-
   beforeEach(() => {
-    store = mockStore({
-      questions: {
-        questions: {
-          'test-poll-id': {
-            id: 'test-poll-id',
-            author: 'testuser',
-            timestamp: 1467166872634,
-            optionOne: {
-              text: 'Test Option One',
-              votes: []
-            },
-            optionTwo: {
-              text: 'Test Option Two',
-              votes: []
-            }
-          }
-        }
-      },
-      users: {
-        users: {
-          testuser: {
-            id: 'testuser',
-            name: 'Test User',
-            avatarURL: 'test-avatar.jpg'
-          }
-        },
-        authedUser: 'testuser'
-      },
-      voting: {
-        user: {
-          id: 'testuser',
-          name: 'Test User'
-        },
-        canVote: true
-      }
-    });
-    store.dispatch = jest.fn();
+    // Clear all mocks before each test
+    jest.clearAllMocks();
   });
 
   it('renders correctly', () => {
-    const { container } = render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <PollDetail />
-        </BrowserRouter>
-      </Provider>
-    );
-    expect(container).toMatchSnapshot();
-  });
-
-  it('displays poll options', () => {
     render(
-      <Provider store={store}>
+      <Provider store={mockStore}>
         <BrowserRouter>
           <PollDetail />
         </BrowserRouter>
@@ -81,34 +52,49 @@ describe('PollDetail Component', () => {
     expect(screen.getByText('Test Option Two')).toBeInTheDocument();
   });
 
-  it('handles voting when user has voting rights', () => {
+  it('handles voting when user has voting rights', async () => {
+    // Mock the dispatch function
+    const mockDispatch = jest.fn(() => Promise.resolve());
+    mockStore.dispatch = mockDispatch;
+
     render(
-      <Provider store={store}>
+      <Provider store={mockStore}>
         <BrowserRouter>
           <PollDetail />
         </BrowserRouter>
       </Provider>
     );
+
     fireEvent.click(screen.getByText('Vote for Option One'));
-    expect(store.dispatch).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalled();
   });
 
   it('shows error when user has no voting rights', () => {
-    store = mockStore({
-      ...store.getState(),
-      voting: {
-        ...store.getState().voting,
-        canVote: false
+    const noRightsStore = configureStore({
+      reducer: {
+        voting: votingReducer
+      },
+      preloadedState: {
+        voting: {
+          polls: {
+            'test123': {
+              ...mockPoll,
+              optionOne: { ...mockPoll.optionOne, votes: ['testUser'] }
+            }
+          },
+          authedUser: 'testUser'
+        }
       }
     });
 
     render(
-      <Provider store={store}>
+      <Provider store={noRightsStore}>
         <BrowserRouter>
           <PollDetail />
         </BrowserRouter>
       </Provider>
     );
+
     fireEvent.click(screen.getByText('Vote for Option One'));
     expect(screen.getByText("You don't have voting rights.")).toBeInTheDocument();
   });

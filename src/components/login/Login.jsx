@@ -1,32 +1,35 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAuthedUser, setUser } from '../../slices/authSlice';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { login } from '../../slices/authSlice';
 import './Login.css';
 
-function Login() {
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const users = useSelector(state => state.users.users);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const { error, isAuthenticated } = useSelector((state) => state.auth);
+  const from = location.state?.from || '/';
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    // Find user in the users list
-    const user = Object.values(users).find(
-      u => u.id === username && u.password === password
-    );
-
-    if (user) {
-      dispatch(setAuthedUser(username));
-      dispatch(setUser(user));
-      navigate('/');
-    } else {
-      setError('Invalid username or password');
+    setIsLoading(true);
+    try {
+      await dispatch(login({ username, password })).unwrap();
+    } catch (err) {
+      console.error('Login failed:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -35,8 +38,11 @@ function Login() {
       <div className="login-box">
         <h2>Employee Polls</h2>
         <form onSubmit={handleSubmit}>
-          {error && <div className="error-message">{error}</div>}
-          
+          {error && (
+            <div className="error-message" role="alert">
+              {error}
+            </div>
+          )}
           <div className="input-group">
             <label htmlFor="username">Username</label>
             <input
@@ -46,9 +52,9 @@ function Login() {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
               required
+              disabled={isLoading}
             />
           </div>
-
           <div className="input-group">
             <label htmlFor="password">Password</label>
             <input
@@ -58,16 +64,27 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
+              disabled={isLoading}
             />
           </div>
-
-          <button type="submit" className="login-button">
-            Login
+          <button 
+            type="submit" 
+            className="login-button"
+            disabled={isLoading || !username || !password}
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
+        <div className="login-help">
+          <p>Demo accounts:</p>
+          <ul>
+            <li>Username: sarahedo | Password: password123</li>
+            <li>Username: tylermcginnis | Password: abc321</li>
+          </ul>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Login;

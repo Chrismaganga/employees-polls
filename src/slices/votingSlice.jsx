@@ -2,43 +2,35 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   votes: {},
-  error: null,
-  loading: false
+  canVote: false,
+  user: null
 };
 
 const votingSlice = createSlice({
   name: 'voting',
   initialState,
   reducers: {
-    startVoting: (state) => {
-      state.loading = true;
-      state.error = null;
+    setUser: (state, action) => {
+      state.user = action.payload;
+      state.canVote = true;
     },
-    voteSuccess: (state, action) => {
-      const { questionId, option, userId } = action.payload;
-      if (!state.votes[questionId]) {
-        state.votes[questionId] = {};
+    vote: (state, action) => {
+      if (!state.canVote) return;
+      const { pollId, option } = action.payload;
+      if (!state.votes[pollId]) {
+        state.votes[pollId] = option;
       }
-      state.votes[questionId][userId] = option;
-      state.loading = false;
-      state.error = null;
-    },
-    voteFailed: (state, action) => {
-      state.error = action.payload;
-      state.loading = false;
     },
     resetVotes: (state) => {
       state.votes = {};
-      state.error = null;
-      state.loading = false;
+      state.canVote = false;
+      state.user = null;
     },
-    // Check if user has voted
-    hasVoted: (state, action) => {
-      const { questionId, userId } = action.payload;
-      return state.votes[questionId]?.[userId] !== undefined;
+    enableVotingRights: (state) => {
+      state.canVote = true;
     }
   }
 });
 
-export const { startVoting, voteSuccess, voteFailed, resetVotes, hasVoted } = votingSlice.actions;
+export const { setUser, vote, resetVotes, enableVotingRights } = votingSlice.actions;
 export default votingSlice.reducer;

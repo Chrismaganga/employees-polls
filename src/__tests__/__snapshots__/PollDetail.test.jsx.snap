@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PollDetail Component renders correctly 1`] = `
+<div>
+  <div
+    class="poll-detail"
+  >
+    <h2>
+      Test User
+       asks:
+    </h2>
+    <div
+      class="poll-content"
+    >
+      <p
+        class="author"
+      >
+        Test Option One
+      </p>
+      <p>
+        0
+         vote(s) (
+        0.0
+        %)
+      </p>
+      <button
+        class="vote-button "
+      >
+        Vote for Option One
+      </button>
+      <p
+        class="author"
+      >
+        Test Option Two
+      </p>
+      <p>
+        0
+         vote(s) (
+        0.0
+        %)
+      </p>
+      <button
+        class="vote-button "
+      >
+        Vote for Option Two
+      </button>
+      <p
+        class="timestamp"
+      >
+        Created at: 
+        6/29/2016, 4:21:12 AM
+      </p>
+    </div>
+  </div>
+</div>
+`;
