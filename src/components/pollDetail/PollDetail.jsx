@@ -8,146 +8,120 @@ function PollDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Fetching data from Redux store
-  const { questions, status: questionsStatus } = useSelector(state => state.questions);
-  const { users } = useSelector(state => state.users);
-  const { authedUser, isAuthenticated } = useSelector(state => state.auth);
-
-  const [voteStatus, setVoteStatus] = useState(null);
-  const [userVote, setUserVote] = useState(null);
+  const [selectedOption, setSelectedOption] = useState('');
   const [isVoting, setIsVoting] = useState(false);
+  const [error, setError] = useState(null);
+  
+  const { isAuthenticated, userProfile } = useSelector((state) => state.auth);
+  const question = useSelector((state) => state.questions.questions[id]);
+  const votes = {
+    optionOne: question?.optionOne.votes || [],
+    optionTwo: question?.optionTwo.votes || []
+  };
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: `/questions/${id}` } });
+      navigate('/login');
     }
-  }, [isAuthenticated, navigate, id]);
+  }, [isAuthenticated, navigate]);
 
-  // Set user's vote if they've already voted
-  useEffect(() => {
-    if (authedUser && questions?.[id]) {
-      const poll = questions[id];
-      if (poll.optionOne.votes.includes(authedUser)) {
-        setUserVote('optionOne');
-      } else if (poll.optionTwo.votes.includes(authedUser)) {
-        setUserVote('optionTwo');
-      }
-    }
-  }, [authedUser, questions, id]);
-
-  // Handle loading and error states
-  if (questionsStatus === 'loading') {
-    return <div className="loading">Loading poll...</div>;
+  if (!question) {
+    return <div className="poll-detail-error">Poll not found</div>;
   }
 
-  if (questionsStatus === 'failed') {
-    return (
-      <div className="error">
-        <h2>Error Loading Poll</h2>
-        <p>There was a problem loading the poll. Please try again later.</p>
-        <button onClick={() => navigate('/')}>Return to Home</button>
-      </div>
-    );
-  }
+  const totalVotes = votes.optionOne.length + votes.optionTwo.length;
+  const hasVoted = userProfile && (
+    votes.optionOne.includes(userProfile.id) || 
+    votes.optionTwo.includes(userProfile.id)
+  );
 
-  const poll = questions?.[id];
-  
-  // Handle invalid poll ID
-  if (!poll && questionsStatus === 'succeeded') {
-    return (
-      <div className="not-found">
-        <h2>404 - Poll Not Found</h2>
-        <p>The poll you're looking for doesn't exist.</p>
-        <button onClick={() => navigate('/')}>Return to Home</button>
-      </div>
-    );
-  }
+  const calculatePercentage = (optionVotes) => {
+    if (totalVotes === 0) return 0;
+    return Math.round((optionVotes.length / totalVotes) * 100);
+  };
 
-  const author = poll ? users?.[poll.author] : null;
-
-  if (!author) {
-    return (
-      <div className="error">
-        <h2>Error Loading Author</h2>
-        <p>There was a problem loading the poll author. Please try again later.</p>
-        <button onClick={() => navigate('/')}>Return to Home</button>
-      </div>
-    );
-  }
-
-  const handleVote = async (option) => {
-    if (!authedUser) {
-      navigate('/login', { state: { from: `/questions/${id}` } });
-      return;
-    }
-
-    if (userVote) {
-      setVoteStatus("You've already voted on this poll!");
+  const handleVote = async () => {
+    if (!selectedOption || !isAuthenticated || hasVoted || isVoting) {
       return;
     }
 
     setIsVoting(true);
-    setVoteStatus(null);
+    setError(null);
 
     try {
-      await dispatch(answerQuestion({ authedUser, qid: id, answer: option })).unwrap();
-      setUserVote(option);
-      setVoteStatus('Your vote has been recorded!');
-    } catch (error) {
-      setVoteStatus('Error recording your vote. Please try again.');
-      console.error('Voting error:', error);
+      await dispatch(answerQuestion({
+        authedUser: userProfile.id,
+        qid: id,
+        answer: selectedOption
+      })).unwrap();
+    } catch (err) {
+      setError(err.message || 'Failed to submit vote. Please try again.');
+      console.error('Voting error:', err);
     } finally {
       setIsVoting(false);
     }
   };
 
-  const totalVotes = poll.optionOne.votes.length + poll.optionTwo.votes.length;
-  const optionOnePercent = totalVotes > 0 ? (poll.optionOne.votes.length / totalVotes) * 100 : 0;
-  const optionTwoPercent = totalVotes > 0 ? (poll.optionTwo.votes.length / totalVotes) * 100 : 0;
-
   return (
     <div className="poll-detail">
-      <h2>{author.name} asks:</h2>
-      <div className="poll-content">
-        {voteStatus && <p className="vote-status">{voteStatus}</p>}
-        
-        <div className="poll-option">
-          <p className="option-text">{poll.optionOne.text}</p>
-          <p className="vote-count">
-            {poll.optionOne.votes.length} vote(s) ({optionOnePercent.toFixed(1)}%)
-            {userVote === 'optionOne' && <span className="your-vote"> - Your Vote</span>}
-          </p>
-          {!userVote && (
+      <h2 className="poll-title">Would You Rather...</h2>
+      
+      {error && <div className="error-message">{error}</div>}
+      
+      <div className="options-container">
+        <div className={`option ${hasVoted && votes.optionOne.includes(userProfile?.id) ? 'voted' : ''}`}>
+          <h3>{question.optionOne.text}</h3>
+          {hasVoted && (
+            <div className="vote-stats">
+              <div className="vote-bar" style={{ width: `${calculatePercentage(votes.optionOne)}%` }}></div>
+              <span>{votes.optionOne.length} votes ({calculatePercentage(votes.optionOne)}%)</span>
+            </div>
+          )}
+          {!hasVoted && (
             <button
-              className="vote-button"
-              onClick={() => handleVote('optionOne')}
+              className={`vote-button ${selectedOption === 'optionOne' ? 'selected' : ''}`}
+              onClick={() => setSelectedOption('optionOne')}
               disabled={isVoting}
             >
-              {isVoting ? 'Voting...' : 'Vote for Option One'}
+              Select
             </button>
           )}
         </div>
 
-        <div className="poll-option">
-          <p className="option-text">{poll.optionTwo.text}</p>
-          <p className="vote-count">
-            {poll.optionTwo.votes.length} vote(s) ({optionTwoPercent.toFixed(1)}%)
-            {userVote === 'optionTwo' && <span className="your-vote"> - Your Vote</span>}
-          </p>
-          {!userVote && (
+        <div className="or-divider">OR</div>
+
+        <div className={`option ${hasVoted && votes.optionTwo.includes(userProfile?.id) ? 'voted' : ''}`}>
+          <h3>{question.optionTwo.text}</h3>
+          {hasVoted && (
+            <div className="vote-stats">
+              <div className="vote-bar" style={{ width: `${calculatePercentage(votes.optionTwo)}%` }}></div>
+              <span>{votes.optionTwo.length} votes ({calculatePercentage(votes.optionTwo)}%)</span>
+            </div>
+          )}
+          {!hasVoted && (
             <button
-              className="vote-button"
-              onClick={() => handleVote('optionTwo')}
+              className={`vote-button ${selectedOption === 'optionTwo' ? 'selected' : ''}`}
+              onClick={() => setSelectedOption('optionTwo')}
               disabled={isVoting}
             >
-              {isVoting ? 'Voting...' : 'Vote for Option Two'}
+              Select
             </button>
           )}
         </div>
+      </div>
 
-        <p className="timestamp">Created at: {new Date(poll.timestamp).toLocaleString()}</p>
+      {!hasVoted && (
+        <button
+          className="submit-vote"
+          onClick={handleVote}
+          disabled={!selectedOption || isVoting}
+        >
+          {isVoting ? 'Submitting...' : 'Submit Vote'}
+        </button>
+      )}
+
+      <div className="total-votes">
+        Total votes: {totalVotes}
       </div>
     </div>
   );
