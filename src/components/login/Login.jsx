@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { login, clearError } from '../../slices/authSlice';
-import './Login.css';
+import './login.css';
+import { login, clearErrors } from '../../slices/authSlice';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -13,17 +13,24 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const { error, isAuthenticated, status } = useSelector((state) => state.auth);
+  const { error, isAuthenticated } = useSelector((state) => state.auth);
   const from = location.state?.from || '/';
 
-  // Clear errors when component unmounts or when inputs change
   useEffect(() => {
-    dispatch(clearError());
+    const storedAuth = localStorage.getItem('isAuthenticated');
+    if (storedAuth) {
+      navigate(from, { replace: true });
+    }
+  }, [navigate, from]);
+
+  useEffect(() => {
+    dispatch(clearErrors());
     setValidationError('');
   }, [username, password, dispatch]);
 
   useEffect(() => {
     if (isAuthenticated) {
+      localStorage.setItem('isAuthenticated', 'true');
       navigate(from, { replace: true });
     }
   }, [isAuthenticated, navigate, from]);
@@ -101,7 +108,7 @@ const Login = () => {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
               required
-              disabled={status === 'loading'}
+              disabled={isLoading}
               className={errorMessage && !password ? 'error' : ''}
               aria-invalid={errorMessage && !password ? 'true' : 'false'}
             />
@@ -115,7 +122,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
-              disabled={status === 'loading'}
+              disabled={isLoading}
               className={errorMessage && !password ? 'error' : ''}
               aria-invalid={errorMessage && !password ? 'true' : 'false'}
             />
@@ -123,9 +130,9 @@ const Login = () => {
           <button 
             type="submit" 
             className="login-button"
-            disabled={status === 'loading' || !username || !password}
+            disabled={isLoading || !username || !password}
           >
-            {status === 'loading' ? 'Logging in...' : 'Login'}
+            {isLoading ? 'Logging in...' : 'Login'}
           </button>
         </form>
         <div className="login-help">

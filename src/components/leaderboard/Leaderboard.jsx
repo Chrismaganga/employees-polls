@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import './Leaderboard.css';
+import './leaderboard.css';
 
 function Leaderboard() {
   const users = useSelector(state => state.users.users);

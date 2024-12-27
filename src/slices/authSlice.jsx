@@ -14,16 +14,20 @@ export const login = createAsyncThunk(
   async ({ username, password }, { rejectWithValue }) => {
     try {
       const users = await _getUsers();
+      if (!users) {
+        return rejectWithValue('Failed to fetch users');
+      }
+
       const user = users[username];
-      
+
       if (!user) {
         return rejectWithValue('User not found');
       }
-      
+
       if (user.password !== password) {
         return rejectWithValue('Incorrect password');
       }
-      
+
       return {
         id: username,
         ...user
@@ -52,7 +56,7 @@ const authSlice = createSlice({
       state.error = null;
       state.status = 'idle';
     },
-    clearError(state) {
+    clearErrors(state) {
       state.error = null;
     }
   },
@@ -79,5 +83,5 @@ const authSlice = createSlice({
   }
 });
 
-export const { setAuthedUser, setUser, logout, clearError } = authSlice.actions;
+export const { setAuthedUser, setUser, logout, clearErrors } = authSlice.actions;
 export default authSlice.reducer;
