@@ -60,6 +60,7 @@ function NewPoll() {
           type="submit"
           disabled={!optionOne || !optionTwo}
           className="submit-btn"
+          onClick={(e) => e.target.save()}
         >
           Submit
         </button>

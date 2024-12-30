@@ -2,11 +2,9 @@ body, html {
   height: 100%;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-.navbar {
-  height: 60px; /* Adjust based on your navbar height */
-}
 
 .main-content {
   min-height: calc(100vh - 60px - 20px); /* 60px for navbar height and 20px for footer padding */
@@ -17,6 +15,9 @@ body, html {
   color: white;
   padding: 20px 0;
   text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 
 .footer-content {

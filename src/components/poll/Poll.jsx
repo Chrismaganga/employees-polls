@@ -47,10 +47,11 @@ function Poll({ question }) {
         <p className="poll-option">{`...${optionOne.text}...`}</p>
         <p className="poll-option">{`...${optionTwo.text}...`}</p>
       </div>
-      View Poll
     </Link>
+    <button className="view-poll">View Poll</button>
     </div>
   );
 }
 
 export default Poll;
+

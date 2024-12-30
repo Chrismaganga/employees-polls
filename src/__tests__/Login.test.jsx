@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import Login from '../components/login/Login';
 import authReducer from '../slices/authSlice';
@@ -18,7 +18,9 @@ describe('Login Component', () => {
     render(
       <Provider store={mockStore}>
         <BrowserRouter>
-          <Login />
+          <Routes>
+            <Route path="/" element={<Login />} />
+          </Routes>
         </BrowserRouter>
       </Provider>
     );
