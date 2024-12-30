@@ -41,14 +41,14 @@ function Poll({ question }) {
         </div>
       </div>
 
-    <div className="poll-link" onClick={() => window.location.href = `/questions/${question.id}`}>
+    <Link className="poll-link" to={`/questions/${question.id}`}>
       <div className="poll-content">
         <h3 className="poll-title">Would You Rather</h3>
         <p className="poll-option">{`...${optionOne.text}...`}</p>
         <p className="poll-option">{`...${optionTwo.text}...`}</p>
       </div>
       View Poll
-    </div>
+    </Link>
     </div>
   );
 }

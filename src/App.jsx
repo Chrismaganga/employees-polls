@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from './slices/usersSlice';
 import { fetchQuestions } from './slices/questionsSlice';
-import { Home, Nav, Leaderboard, Login, NewPoll, NotFound, Poll, PollDetail, Footer } from './components';
+import { Home, Nav, Leaderboard, Login, NewPoll, NotFound, PollDetail, Footer } from './components';
 import './App.css';
 
 function App() {

@@ -33,6 +33,9 @@ const Login = () => {
       localStorage.setItem('isAuthenticated', 'true');
       navigate(from, { replace: true });
     }
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
+    }
   }, [isAuthenticated, navigate, from]);
 
   const validateInputs = () => {
@@ -81,6 +84,10 @@ const Login = () => {
     }
   };
 
+//   useEffect(() => {
+    
+// };
+
   const getErrorMessage = () => {
     if (validationError) return validationError;
     if (error) return error;
@@ -109,8 +116,8 @@ const Login = () => {
               placeholder="Enter your username"
               required
               disabled={isLoading}
-              className={errorMessage && !password ? 'error' : ''}
-              aria-invalid={errorMessage && !password ? 'true' : 'false'}
+              className={errorMessage && !username ? 'error' : ''}
+              aria-invalid={errorMessage && !username ? 'true' : 'false'}
             />
           </div>
           <div className="input-group">
@@ -134,6 +141,7 @@ const Login = () => {
           >
             {isLoading ? 'Logging in...' : 'Login'}
           </button>
+  
         </form>
         <div className="login-help">
           <p>Demo accounts:</p>
