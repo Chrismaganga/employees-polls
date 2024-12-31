@@ -11,9 +11,9 @@ function PollDetail() {
   const [selectedOption, setSelectedOption] = useState('');
   
   const { isAuthenticated, userProfile } = useSelector((state) => state.auth);
-  const { loading, error } = useSelector((state) => state.voting);
-  const question = useSelector((state) => state.questions.questions[id]);
-  const votes = useSelector((state) => state.voting.votes[id] || {});
+  const { loading, error } = useSelector(selectVoting);
+  const question = useSelector((state) => selectQuestions(state)[id]);
+  const votes = useSelector((state) => selectVotes(state, id));
 
   useEffect(() => {
     if (!isAuthenticated) {

@@ -29,7 +29,7 @@ describe('Nav', () => {
   const renderNav = () => {
     render(
       <Provider store={mockStore}>
-        <BrowserRouter>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Nav />
         </BrowserRouter>
       </Provider>

@@ -26,8 +26,11 @@ This is a React application that uses Redux for state management and Jest for te
 ## Installation within main folder
 npm install
 npm run dev
-select user to sign in
+select user on demo accounts underneath the login form to sign in,
+        or
+or check your prefered user in _DATA.js
+
+
 ## To run test
 npm test
-jest --watch #runs jest -o by default
-jest --watchAll #runs all tests
+
