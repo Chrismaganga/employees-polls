@@ -216,3 +216,4 @@ export function _saveQuestionAnswer({ authedUser, qid, answer }) {
     }, 500);
   });
 }
+export default { _getUsers, _getQuestions, _saveQuestion, _saveQuestionAnswer , users, questions};

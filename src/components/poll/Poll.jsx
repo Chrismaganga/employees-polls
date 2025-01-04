@@ -54,4 +54,3 @@ function Poll({ question }) {
 }
 
 export default Poll;
-

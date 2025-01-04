@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addQuestion } from '../../slices/questionsSlice';
+import { addQuestion } from '../../slices/questionsSlice'; // This should be an action that dispatches to Redux
 import { useNavigate } from 'react-router-dom';
 import './NewPoll.css';
 
@@ -9,17 +9,34 @@ function NewPoll() {
   const [optionTwo, setOptionTwo] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const authedUser = useSelector(state => state.auth.authedUser);
+
+  // Access the authenticated user from Redux
+  const authedUser = useSelector((state) => state.auth.authedUser);
+
+  // Handle changes for option inputs
+  const handleOptionOneChange = (e) => setOptionOne(e.target.value);
+  const handleOptionTwoChange = (e) => setOptionTwo(e.target.value);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addQuestion({
+
+    if (!authedUser) {
+      console.error('User not authenticated');
+      return;
+    }
+
+    // Create the new poll object
+    const newPoll = {
       optionOneText: optionOne,
       optionTwoText: optionTwo,
       author: authedUser,
-    })).then(() => {
-      navigate('/');
-    });
+    };
+
+    // Dispatch the action to add the new question to Redux
+    dispatch(addQuestion(newPoll));
+
+    // Navigate to the home page after submitting
+    navigate('/');
   };
 
   return (
@@ -33,14 +50,14 @@ function NewPoll() {
               id="optionOne"
               type="text"
               value={optionOne}
-              onChange={(e) => setOptionOne(e.target.value)}
+              onChange={handleOptionOneChange}
               required
               className="input-field"
               placeholder="Enter option one"
             />
           </label>
         </div>
-        
+
         <div className="input-group">
           <label htmlFor="optionTwo">
             Option Two:
@@ -48,7 +65,7 @@ function NewPoll() {
               id="optionTwo"
               type="text"
               value={optionTwo}
-              onChange={(e) => setOptionTwo(e.target.value)}
+              onChange={handleOptionTwoChange}
               required
               className="input-field"
               placeholder="Enter option two"
@@ -60,7 +77,6 @@ function NewPoll() {
           type="submit"
           disabled={!optionOne || !optionTwo}
           className="submit-btn"
-          onClick={(e) => e.target.save()}
         >
           Submit
         </button>
@@ -68,4 +84,5 @@ function NewPoll() {
     </div>
   );
 }
+
 export default NewPoll;

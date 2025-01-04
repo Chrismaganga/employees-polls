@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './login.css';
 import { login, clearErrors } from '../../slices/authSlice';
 
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -78,15 +79,12 @@ const Login = () => {
       }
     } catch (err) {
       console.error('Login failed:', err);
-      // Don't set error here as it's handled by the slice
     } finally {
       setIsLoading(false);
     }
   };
 
-//   useEffect(() => {
-    
-// };
+
 
   const getErrorMessage = () => {
     if (validationError) return validationError;
@@ -100,6 +98,8 @@ const Login = () => {
     <div className="login-container">
       <div className="login-box">
         <h2 className='heading'>EMPLOYEES POLLS</h2>
+      
+        
         <form onSubmit={handleSubmit} noValidate>
           {errorMessage && (
             <div className="error-message" role="alert">
@@ -145,7 +145,7 @@ const Login = () => {
         </form>
         <div className="login-help">
           <p>Demo accounts:</p>
-          <ul>
+          <ul className="demo-accounts">
             <li>Username: sarahedo | Password: password123</li>
             <li>Username: tylermcginnis | Password: abc321</li>
           </ul>
