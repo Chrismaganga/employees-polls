@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addQuestion } from '../../slices/questionsSlice'; // This should be an action that dispatches to Redux
+import { addQuestion } from '../../slices/questionsSlice'; // This action now uses createAsyncThunk
 import { useNavigate } from 'react-router-dom';
 import './NewPoll.css';
 
 function NewPoll() {
   const [optionOne, setOptionOne] = useState('');
   const [optionTwo, setOptionTwo] = useState('');
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -20,29 +21,47 @@ function NewPoll() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validation
+    if (!optionOne.trim() || !optionTwo.trim()) {
+      setError('Both options are required.');
+      return;
+    }
+
     if (!authedUser) {
       console.error('User not authenticated');
+      setError('You need to be logged in to create a poll.');
       return;
     }
 
     // Create the new poll object
     const newPoll = {
-      optionOneText: optionOne,
-      optionTwoText: optionTwo,
+      id: `poll-${Date.now()}`, // Generate a unique ID for the new poll
+      optionOneText: optionOne.trim(),
+      optionTwoText: optionTwo.trim(),
       author: authedUser,
+      timestamp: new Date().toISOString(),
     };
 
-    // Dispatch the action to add the new question to Redux
-    dispatch(addQuestion(newPoll));
-
-    // Navigate to the home page after submitting
-    navigate('/');
+    // Dispatch the addQuestion action
+    dispatch(addQuestion(newPoll))
+      .then(() => {
+        // On success, navigate to the home page and reset the form
+        setOptionOne('');
+        setOptionTwo('');
+        setError(null);
+        navigate('/');
+      })
+      .catch((err) => {
+        console.error('Error creating poll:', err);
+        setError('Failed to create poll.');
+      });
   };
 
   return (
     <div className="new-poll-container">
       <h2>Create New Poll</h2>
       <form onSubmit={handleSubmit} className="new-poll-form">
+        {error && <p className="error-message">{error}</p>}
         <div className="input-group">
           <label htmlFor="optionOne">
             Option One:
