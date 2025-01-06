@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addQuestion } from '../../slices/questionsSlice'; // This action now uses createAsyncThunk
+import { addQuestion } from '../../slices/questionsSlice';
 import { useNavigate } from 'react-router-dom';
 import './NewPoll.css';
 
@@ -8,96 +8,99 @@ function NewPoll() {
   const [optionOne, setOptionOne] = useState('');
   const [optionTwo, setOptionTwo] = useState('');
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Access the authenticated user from Redux
   const authedUser = useSelector((state) => state.auth.authedUser);
 
-  // Handle changes for option inputs
-  const handleOptionOneChange = (e) => setOptionOne(e.target.value);
-  const handleOptionTwoChange = (e) => setOptionTwo(e.target.value);
+  useEffect(() => {
+    if (!authedUser) {
+      navigate('/login');
+    }
+  }, [authedUser, navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!optionOne.trim() || !optionTwo.trim()) {
       setError('Both options are required.');
       return;
     }
 
-    if (!authedUser) {
-      console.error('User not authenticated');
-      setError('You need to be logged in to create a poll.');
-      return;
-    }
+    setIsSubmitting(true);
+    setError(null);
 
-    // Create the new poll object
-    const newPoll = {
-      id: `poll-${Date.now()}`, // Generate a unique ID for the new poll
-      optionOneText: optionOne.trim(),
-      optionTwoText: optionTwo.trim(),
-      author: authedUser,
-      timestamp: new Date().toISOString(),
-    };
+    try {
+      const newPoll = {
+        optionOneText: optionOne.trim(),
+        optionTwoText: optionTwo.trim(),
+        author: authedUser
+      };
 
-    // Dispatch the addQuestion action
-    dispatch(addQuestion(newPoll))
-      .then(() => {
-        // On success, navigate to the home page and reset the form
+      const result = await dispatch(addQuestion(newPoll)).unwrap();
+      
+      if (result && result.id) {
         setOptionOne('');
         setOptionTwo('');
-        setError(null);
         navigate('/');
-      })
-      .catch((err) => {
-        console.error('Error creating poll:', err);
-        setError('Failed to create poll.');
-      });
+      } else {
+        throw new Error('Failed to create poll');
+      }
+    } catch (err) {
+      console.error('Error creating poll:', err);
+      setError(err.message || 'Failed to create poll. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (!authedUser) {
+    return null;
+  }
 
   return (
     <div className="new-poll-container">
-      <h2>Create New Poll</h2>
+      <h2>Would You Rather</h2>
+      <p className="subtitle">Create Your New Poll</p>
+      
       <form onSubmit={handleSubmit} className="new-poll-form">
-        {error && <p className="error-message">{error}</p>}
+        {error && <div className="error-message">{error}</div>}
+        
         <div className="input-group">
-          <label htmlFor="optionOne">
-            Option One:
-            <input
-              id="optionOne"
-              type="text"
-              value={optionOne}
-              onChange={handleOptionOneChange}
-              required
-              className="input-field"
-              placeholder="Enter option one"
-            />
-          </label>
+          <label htmlFor="optionOne">Option One</label>
+          <input
+            id="optionOne"
+            type="text"
+            value={optionOne}
+            onChange={(e) => setOptionOne(e.target.value)}
+            placeholder="Enter first option"
+            disabled={isSubmitting}
+            required
+          />
         </div>
 
+        <div className="divider">OR</div>
+
         <div className="input-group">
-          <label htmlFor="optionTwo">
-            Option Two:
-            <input
-              id="optionTwo"
-              type="text"
-              value={optionTwo}
-              onChange={handleOptionTwoChange}
-              required
-              className="input-field"
-              placeholder="Enter option two"
-            />
-          </label>
+          <label htmlFor="optionTwo">Option Two</label>
+          <input
+            id="optionTwo"
+            type="text"
+            value={optionTwo}
+            onChange={(e) => setOptionTwo(e.target.value)}
+            placeholder="Enter second option"
+            disabled={isSubmitting}
+            required
+          />
         </div>
 
         <button
           type="submit"
-          disabled={!optionOne || !optionTwo}
-          className="submit-btn"
+          disabled={!optionOne.trim() || !optionTwo.trim() || isSubmitting}
+          className="submit-button"
         >
-          Submit
+          {isSubmitting ? 'Creating...' : 'Create Poll'}
         </button>
       </form>
     </div>

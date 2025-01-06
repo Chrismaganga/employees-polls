@@ -138,11 +138,10 @@ export function _getQuestions() {
   });
 }
 
-function formatQuestion({ optionOneText, optionTwoText, author }) {
+ function formatQuestion({ optionOneText, optionTwoText, author }) {
   return {
     id: generateUID(),
-    timestamp: Date.now(),
-    author,
+     author,
     optionOne: {
       votes: [],  // votes should be an array
       text: optionOneText,
@@ -153,7 +152,12 @@ function formatQuestion({ optionOneText, optionTwoText, author }) {
     }
   }
 }
-
+export function generateUID() {
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
+}
 export function _saveQuestion(question) {
   return new Promise((resolve, reject) => {
     if (!question.optionOneText || !question.optionTwoText || !question.author) {
