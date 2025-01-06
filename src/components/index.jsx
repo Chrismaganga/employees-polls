@@ -5,7 +5,7 @@ import Login from './login/Login';
 import NewPoll from './newpoll/NewPoll';
 import NotFound from './notfound/NotFound';
 import Poll from './poll/Poll';
-import PollDetail from './pollDetail/PollDetail';
+import PollDetail from './polls/PollDetail';
 import Footer from './footer/Footer';
 
 export {
