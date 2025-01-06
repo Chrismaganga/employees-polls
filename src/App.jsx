@@ -1,10 +1,45 @@
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route, Navigate, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from './slices/usersSlice';
 import { fetchQuestions } from './slices/questionsSlice';
 import { Home, Nav, Leaderboard, Login, NewPoll, NotFound, PollDetail, Footer } from './components';
 import './App.css';
+
+const ProtectedLayout = ({ auth }) => {
+  if (!auth) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <>
+      <Nav />
+      <Outlet />
+      <Footer />
+    </>
+  );
+};
+
+const router = (auth) => createBrowserRouter(
+  createRoutesFromElements(
+    <Route>
+      <Route path="/login" element={auth ? <Navigate to="/" replace /> : <Login />} />
+      <Route element={<ProtectedLayout auth={auth} />}>
+        <Route path="/" element={<Home />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
+        <Route path="add" element={<NewPoll />} />
+        <Route path="questions/:id" element={<PollDetail />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Route>
+  ),
+  {
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }
+  }
+);
 
 function App() {
   const dispatch = useDispatch();
@@ -19,23 +54,12 @@ function App() {
     if (questionsStatus === 'idle') {
       dispatch(fetchQuestions());
     }
-  }, [usersStatus, questionsStatus, dispatch]);
+  }, [dispatch, usersStatus, questionsStatus]);
 
   return (
-    <Router>
-      <div>
-        {auth && <Nav />}
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={auth ? <Home /> : <Login />} />
-          <Route path="/questions/:id" element={auth ? <PollDetail /> : <Login />} />
-          <Route path="/add" element={auth ? <NewPoll /> : <Login />} />
-          <Route path="/leaderboard" element={auth ? <Leaderboard /> : <Login />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        {auth && <Footer />}
-      </div>
-    </Router>
+    <div className="app">
+      <RouterProvider router={router(auth)} />
+    </div>
   );
 }
 
