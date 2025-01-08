@@ -8,6 +8,7 @@ function Poll({ poll }) {
   const users = useSelector((state) => state.users.users);
   const author = users[poll.author];
 
+
   // Calculate if the current user has voted
   const hasVoted = poll.optionOne.votes.includes(authedUser) || 
                   poll.optionTwo.votes.includes(authedUser);
